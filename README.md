@@ -16,10 +16,11 @@ O **PhishCatch** é uma ferramenta automatizada de *Threat Intelligence* e OSINT
 ## Funcionalidades
 
 * **Motor Avançado de Typosquatting:** Gera dezenas de permutações da ameaça utilizando múltiplos algoritmos: omissão, repetição, transposição (letras trocadas adjacentes) e substituição de homógrafos básicos (ex: "o" por "0").
+* **OSINT Profundo (Integração WHOIS):** Consulta ativamente as bases de dados de registo global para extrair a data de criação do domínio malicioso, calculando a sua idade exata em dias.
+* **Triagem Dinâmica de Criticidade:** O motor de risco avalia a ameaça cruzando 3 fatores: existência de servidor web (HTTP 200), servidor de e-mail malicioso (Registo MX) e a idade do domínio. Domínios recém-registados (menos de 30 dias) sofrem forte penalização de risco, refletindo ameaças iminentes.
 * **Resolução Multithread e UX:** Realiza consultas DNS concorrentes apoiadas por uma interface de progresso visual, garantindo uma varredura extremamente rápida de vastos volumes de permutações.
-* **Triagem de Criticidade (Cálculo de Risco):** Vai muito além da simples verificação de registo. A ferramenta classifica o risco dinamicamente (LOW, MEDIUM, HIGH, CRITICAL) ao detetar se o domínio falso possui um servidor web ativo (HTTP 200) e/ou se está configurado para o envio de e-mails (Registo MX ativo).
 * **Exportação Estruturada:** Gera automaticamente um relatório `.csv` rico e detalhado com as evidências da varredura, pronto a ser ingerido por plataformas SIEM ou consumido pela equipa de resposta a incidentes.
-* **Isolamento Total (DevSecOps):** Integralmente empacotado via Docker, garantindo 100% de reprodutibilidade em qualquer ambiente de avaliação e erradicando o problema do *Software Rot* (deterioração das dependências ao longo do tempo).
+* **Isolamento Total (DevSecOps):** Integralmente empacotado via Docker (incluindo dependências de SO como utilitários de rede), garantindo 100% de reprodutibilidade em qualquer ambiente de avaliação e erradicando o problema do *Software Rot*.
 
 ## Como Executar (Via Docker)
 

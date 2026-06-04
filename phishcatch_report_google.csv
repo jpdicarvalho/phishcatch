@@ -1,0 +1,9 @@
+domain,is_registered,ip_address,has_mx_record,has_website,age_days,threat_level
+googlee.com.br,True,172.67.150.115,True,False,2268,HIGH
+goole.com.br,True,172.67.129.196,False,True,7996,MEDIUM
+googel.com.br,True,104.247.81.99,True,False,8005,HIGH
+ggoogle.com.br,True,99.83.176.46,False,True,7689,MEDIUM
+googe.com.br,True,104.247.81.99,True,False,8530,HIGH
+gogle.com.br,True,104.21.59.145,False,False,2473,LOW
+googl.com.br,True,77.37.42.21,True,True,186,CRITICAL
+googlle.com.br,True,104.21.2.162,False,False,2570,LOW

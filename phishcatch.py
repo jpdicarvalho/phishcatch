@@ -4,6 +4,8 @@ import dns.resolver
 import concurrent.futures
 import csv
 import requests
+import whois
+from datetime import datetime
 from tqdm import tqdm
 from colorama import Fore, Style, init
 
@@ -19,24 +21,22 @@ class PhishCatch:
         self.results = []
 
     def generate_permutations(self):
-        """Gera domínios falsos usando múltiplas técnicas de Typosquatting"""
         permutations = set()
-        vowels = 'aeiou'
         
-        # 1. Omission (Omissão)
+        # 1. Omission
         for i in range(len(self.base_name)):
             permutations.add(f"{self.base_name[:i]}{self.base_name[i+1:]}.{self.suffix}")
 
-        # 2. Repetition (Repetição)
+        # 2. Repetition
         for i in range(len(self.base_name)):
             permutations.add(f"{self.base_name[:i]}{self.base_name[i]}{self.base_name[i:]}.{self.suffix}")
             
-        # 3. Transposition (Troca de letras adjacentes)
+        # 3. Transposition
         for i in range(len(self.base_name) - 1):
             transposed = self.base_name[:i] + self.base_name[i+1] + self.base_name[i] + self.base_name[i+2:]
             permutations.add(f"{transposed}.{self.suffix}")
             
-        # 4. Homoglyphs Básicos (o -> 0, l -> 1)
+        # 4. Homoglyphs Básicos
         homoglyphs = self.base_name.replace('o', '0').replace('l', '1').replace('i', '1')
         if homoglyphs != self.base_name:
             permutations.add(f"{homoglyphs}.{self.suffix}")
@@ -44,22 +44,37 @@ class PhishCatch:
         return [domain for domain in permutations if domain and domain != self.target_domain and not domain.startswith('.')]
 
     def check_http_status(self, domain):
-        """Tenta fazer um pedido HTTP para ver se existe um website ativo"""
         try:
-            # Pedido rápido com timeout curto para não travar o script
             response = requests.get(f"http://{domain}", timeout=2)
             return True if response.status_code == 200 else False
         except requests.exceptions.RequestException:
             return False
 
+    def check_domain_age(self, domain):
+        """Faz a consulta WHOIS e retorna a idade do domínio em dias"""
+        try:
+            w = whois.whois(domain)
+            creation_date = w.creation_date
+            
+            # O WHOIS às vezes retorna uma lista de datas, pegamos na primeira
+            if isinstance(creation_date, list):
+                creation_date = creation_date[0]
+                
+            if creation_date:
+                days_old = (datetime.now() - creation_date).days
+                return days_old
+        except Exception:
+            pass
+        return None
+
     def resolve_dns(self, domain):
-        """Verifica IP, Registo MX e Status HTTP"""
         result = {
             "domain": domain,
             "is_registered": False,
             "ip_address": None,
             "has_mx_record": False,
             "has_website": False,
+            "age_days": "Desconhecido",
             "threat_level": "LOW"
         }
         
@@ -68,23 +83,34 @@ class PhishCatch:
             result["is_registered"] = True
             result["ip_address"] = answers[0].to_text()
 
-            # Verifica e-mail ativo (MX)
+            # Se está registado, verifica e-mail e site
             try:
                 dns.resolver.resolve(domain, 'MX', lifetime=2)
                 result["has_mx_record"] = True
             except Exception:
                 pass
                 
-            # Verifica se o site abre no browser (HTTP 200)
             result["has_website"] = self.check_http_status(domain)
             
-            # Cálculo de Risco
+            # Novo: Verificação da Idade via WHOIS (Apenas se o domínio existir!)
+            age = self.check_domain_age(domain)
+            if age is not None:
+                result["age_days"] = age
+            
+            # Cálculo de Risco Avançado
             if result["has_mx_record"] and result["has_website"]:
                 result["threat_level"] = "CRITICAL"
             elif result["has_mx_record"]:
                 result["threat_level"] = "HIGH"
             elif result["has_website"]:
                 result["threat_level"] = "MEDIUM"
+                
+            # PENALIZAÇÃO POR IDADE: Domínios registados há menos de 30 dias sobem de risco
+            if age is not None and age < 30:
+                if result["threat_level"] in ["LOW", "MEDIUM"]:
+                    result["threat_level"] = "HIGH"
+                elif result["threat_level"] == "HIGH":
+                    result["threat_level"] = "CRITICAL"
 
         except Exception:
             pass 
@@ -95,12 +121,10 @@ class PhishCatch:
         print(f"\n{Fore.CYAN}[*] Iniciando PhishCatch no alvo: {Fore.WHITE}{self.target_domain}{Style.RESET_ALL}")
         domains_to_test = self.generate_permutations()
         print(f"[*] {len(domains_to_test)} permutações de ameaça geradas.")
-        print(f"[*] A resolver DNS e sondar servidores web...\n")
+        print(f"[*] A resolver DNS, sondar servidores web e verificar Idade (WHOIS)...\n")
 
-        # Multithreading com Barra de Progresso visual (tqdm)
         scanned_results = []
         with concurrent.futures.ThreadPoolExecutor(max_workers=15) as executor:
-            # Mapeia as execuções e embrulha no tqdm para a barra animada
             futures = {executor.submit(self.resolve_dns, domain): domain for domain in domains_to_test}
             for future in tqdm(concurrent.futures.as_completed(futures), total=len(domains_to_test), desc="Verificando", bar_format="{l_bar}%s{bar}%s{r_bar}" % (Fore.GREEN, Style.RESET_ALL)):
                 scanned_results.append(future.result())
@@ -116,18 +140,18 @@ class PhishCatch:
 
         csv_file = f"phishcatch_report_{self.base_name}.csv"
         with open(csv_file, mode='w', newline='') as file:
-            writer = csv.DictWriter(file, fieldnames=["domain", "is_registered", "ip_address", "has_mx_record", "has_website", "threat_level"])
+            writer = csv.DictWriter(file, fieldnames=["domain", "is_registered", "ip_address", "has_mx_record", "has_website", "age_days", "threat_level"])
             writer.writeheader()
             
             for res in self.results:
                 writer.writerow(res)
                 
-                # Definição visual das cores por gravidade
                 color = Fore.RED if res["threat_level"] in ["HIGH", "CRITICAL"] else Fore.YELLOW
                 mx_str = "Sim" if res["has_mx_record"] else "Não"
                 web_str = "Sim" if res["has_website"] else "Não"
+                age_str = f"{res['age_days']} dias" if isinstance(res['age_days'], int) else res['age_days']
                 
-                print(f"{color}[!] {res['domain']:<15} | IP: {res['ip_address']:<15} | E-mail MX: {mx_str:<3} | Site Web: {web_str:<3} | Risco: {res['threat_level']}{Style.RESET_ALL}")
+                print(f"{color}[!] {res['domain']:<15} | Idade: {age_str:<10} | E-mail: {mx_str:<3} | Site: {web_str:<3} | Risco: {res['threat_level']}{Style.RESET_ALL}")
                 
         print(f"\n{Fore.CYAN}[*] Relatório de Inteligência exportado para: {csv_file}{Style.RESET_ALL}")
 
