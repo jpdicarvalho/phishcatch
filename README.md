@@ -49,21 +49,21 @@ Ao executar a ferramenta contra um domínio real, a saída no terminal destacar�
 ```bash
 [*] Iniciando PhishCatch no alvo: google.com.br
 [*] 15 permutações de ameaça geradas.
-[*] A resolver DNS e sondar servidores web...
+[*] A resolver DNS, sondar servidores web e verificar Idade (WHOIS)...
 
-Verificando: 100%|██████████| 15/15 [00:02<00:00,  6.77it/s]
+Verificando: 100%|██████████| 15/15 [00:07<00:00,  1.92it/s]
 
 
 [+] Varredura Concluída! 8 domínios maliciosos detetados.
 
-[!] googlee.com.br  | IP: 104.21.30.30    | E-mail MX: Sim | Site Web: Não | Risco: HIGH
-[!] ggoogle.com.br  | IP: 99.83.176.46    | E-mail MX: Não | Site Web: Sim | Risco: MEDIUM
-[!] goole.com.br    | IP: 104.21.2.227    | E-mail MX: Não | Site Web: Sim | Risco: MEDIUM
-[!] googe.com.br    | IP: 104.247.81.99   | E-mail MX: Sim | Site Web: Não | Risco: HIGH
-[!] googel.com.br   | IP: 104.247.81.99   | E-mail MX: Sim | Site Web: Não | Risco: HIGH
-[!] googl.com.br    | IP: 89.116.213.44   | E-mail MX: Sim | Site Web: Sim | Risco: CRITICAL
-[!] gogle.com.br    | IP: 104.21.59.145   | E-mail MX: Não | Site Web: Não | Risco: LOW
-[!] googlle.com.br  | IP: 172.67.129.97   | E-mail MX: Não | Site Web: Não | Risco: LOW
+[!] googlee.com.br  | Idade: 2268 dias  | E-mail: Sim | Site: Não | Risco: HIGH
+[!] goole.com.br    | Idade: 7996 dias  | E-mail: Não | Site: Sim | Risco: MEDIUM
+[!] googel.com.br   | Idade: 8005 dias  | E-mail: Sim | Site: Não | Risco: HIGH
+[!] ggoogle.com.br  | Idade: 7689 dias  | E-mail: Não | Site: Sim | Risco: MEDIUM
+[!] googe.com.br    | Idade: 8530 dias  | E-mail: Sim | Site: Não | Risco: HIGH
+[!] gogle.com.br    | Idade: 2473 dias  | E-mail: Não | Site: Não | Risco: LOW
+[!] googl.com.br    | Idade: 186 dias   | E-mail: Sim | Site: Sim | Risco: CRITICAL
+[!] googlle.com.br  | Idade: 2570 dias  | E-mail: Não | Site: Não | Risco: LOW
 
 [*] Relatório de Inteligência exportado para: phishcatch_report_google.csv
 ```
