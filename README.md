@@ -9,17 +9,17 @@
 
 ## Sobre o Projeto
 
-Na cibersegurança, o **Typosquatting** (ou sequestro de erros de digitação) é um vetor de ataque onde cibercriminosos registam domínios visualmente idênticos aos de empresas reais (ex: `googlee.com` em vez de `google.com`). O objetivo é enganar utilizadores em ataques de *Phishing* de credenciais ou realizar ataques de **BEC (Business Email Compromise)**, enviando e-mails fraudulentos que parecem ser da organização legítima.
+Na cibersegurança, o **Typosquatting** (sequestro de domínio por erro de digitação) e os **Ataques Homográficos** representam vetores críticos de ameaça. Cibercriminosos registam domínios visualmente muito semelhantes aos de organizações legítimas (ex: `googlee.com` ou `googel.com` em vez de `google.com`). O objetivo central é enganar utilizadores em campanhas de *Phishing* para roubo de credenciais ou orquestrar ataques sofisticados de **BEC (Business Email Compromise)**, enviando e-mails fraudulentos que escapam à perceção visual da vítima.
 
-O **PhishCatch** é uma ferramenta de OSINT (Open-Source Intelligence) automatizada. Gera permutações de um domínio alvo e realiza uma varredura na internet em busca de registos DNS e servidores de e-mail (Registos MX) ativos em domínios falsos, produzindo inteligência de ameaças acionável para equipas de *Blue Team*.
+O **PhishCatch** é uma ferramenta automatizada de *Threat Intelligence* e OSINT (Open-Source Intelligence). Através da geração de múltiplas permutações de um domínio alvo, o artefacto realiza uma varredura veloz na internet em busca de registos DNS (IP), servidores de e-mail maliciosos (Registos MX) e páginas web ativas. O resultado final é a produção de inteligência de ameaças acionável, permitindo que equipas de *Blue Team* atuem proativamente no bloqueio (takedown) destas infraestruturas.
 
 ## Funcionalidades
 
-* **Motor de Typosquatting:** Gera dezenas de permutações através de algoritmos de omissão e repetição de carateres.
-* **Resolução Multithread:** Realiza consultas DNS concorrentes, garantindo uma varredura extremamente rápida.
-* **Avaliação de Ameaça:** Distingue entre domínios apenas registados e domínios configurados para enviar e-mails maliciosos (Registo MX ativo).
-* **Exportação Estruturada:** Gera um ficheiro `.csv` automático com os resultados da varredura, pronto a ser consumido por equipas de resposta a incidentes.
-* **Isolamento Total:** Empacotado via Docker, garantindo 100% de reprodutibilidade e eliminando o *Software Rot* (deterioração de dependências).
+* **Motor Avançado de Typosquatting:** Gera dezenas de permutações da ameaça utilizando múltiplos algoritmos: omissão, repetição, transposição (letras trocadas adjacentes) e substituição de homógrafos básicos (ex: "o" por "0").
+* **Resolução Multithread e UX:** Realiza consultas DNS concorrentes apoiadas por uma interface de progresso visual, garantindo uma varredura extremamente rápida de vastos volumes de permutações.
+* **Triagem de Criticidade (Cálculo de Risco):** Vai muito além da simples verificação de registo. A ferramenta classifica o risco dinamicamente (LOW, MEDIUM, HIGH, CRITICAL) ao detetar se o domínio falso possui um servidor web ativo (HTTP 200) e/ou se está configurado para o envio de e-mails (Registo MX ativo).
+* **Exportação Estruturada:** Gera automaticamente um relatório `.csv` rico e detalhado com as evidências da varredura, pronto a ser ingerido por plataformas SIEM ou consumido pela equipa de resposta a incidentes.
+* **Isolamento Total (DevSecOps):** Integralmente empacotado via Docker, garantindo 100% de reprodutibilidade em qualquer ambiente de avaliação e erradicando o problema do *Software Rot* (deterioração das dependências ao longo do tempo).
 
 ## Como Executar (Via Docker)
 
@@ -47,15 +47,22 @@ Ao executar a ferramenta contra um domínio real, a saída no terminal destacar�
 
 ```bash
 [*] Iniciando PhishCatch no alvo: google.com.br
-[*] 10 variações de typosquatting geradas.
-[*] Varrendo a internet (Resolução DNS multithread)...
+[*] 15 permutações de ameaça geradas.
+[*] A resolver DNS e sondar servidores web...
 
-[+] Varredura Concluída! 7 domínios suspeitos encontrados.
+Verificando: 100%|██████████| 15/15 [00:02<00:00,  6.77it/s]
 
-[!] googlee.com.br | IP: 172.67.150.115 | Recebe E-mail: Sim (Phishing Alert!)
-[!] goole.com.br | IP: 104.21.2.227 | Recebe E-mail: Não
-[!] googe.com.br | IP: 104.247.81.99 | Recebe E-mail: Sim (Phishing Alert!)
-[!] googl.com.br | IP: 147.79.105.22 | Recebe E-mail: Sim (Phishing Alert!)
 
-[*] Relatório detalhado salvo em: phishcatch_report_google.csv
+[+] Varredura Concluída! 8 domínios maliciosos detetados.
+
+[!] googlee.com.br  | IP: 104.21.30.30    | E-mail MX: Sim | Site Web: Não | Risco: HIGH
+[!] ggoogle.com.br  | IP: 99.83.176.46    | E-mail MX: Não | Site Web: Sim | Risco: MEDIUM
+[!] goole.com.br    | IP: 104.21.2.227    | E-mail MX: Não | Site Web: Sim | Risco: MEDIUM
+[!] googe.com.br    | IP: 104.247.81.99   | E-mail MX: Sim | Site Web: Não | Risco: HIGH
+[!] googel.com.br   | IP: 104.247.81.99   | E-mail MX: Sim | Site Web: Não | Risco: HIGH
+[!] googl.com.br    | IP: 89.116.213.44   | E-mail MX: Sim | Site Web: Sim | Risco: CRITICAL
+[!] gogle.com.br    | IP: 104.21.59.145   | E-mail MX: Não | Site Web: Não | Risco: LOW
+[!] googlle.com.br  | IP: 172.67.129.97   | E-mail MX: Não | Site Web: Não | Risco: LOW
+
+[*] Relatório de Inteligência exportado para: phishcatch_report_google.csv
 ```
