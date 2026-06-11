@@ -30,7 +30,7 @@ Para garantir a reprodutibilidade, este artefacto foi construído para ser execu
 Faça clone do repositório, entre na pasta e construa a imagem Docker:
 
 ```bash
-git clone [https://github.com/SEU_USUARIO/phishcatch.git](https://github.com/SEU_USUARIO/phishcatch.git)
+git clone https://github.com/jpdicarvalho/phishcatch.git
 cd phishcatch
 docker build -t phishcatch .
 ```
