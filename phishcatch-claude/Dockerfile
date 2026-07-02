@@ -25,7 +25,7 @@ COPY phishcatch.py .
 COPY test_phishcatch.py .
 
 # Create a non-root user for security best practices
-RUN useradd --create-home appuser
+RUN useradd --create-home appuser && chown -R appuser:appuser /app
 USER appuser
 
 # Default entrypoint runs PhishCatch
