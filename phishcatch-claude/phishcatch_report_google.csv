@@ -1,0 +1,17 @@
+domain,is_registered,ip_address,has_mx_record,has_website,age_days,threat_level
+googel.com,True,172.217.30.36,True,True,,CRITICAL
+oogle.com,True,172.67.185.69,True,True,,CRITICAL
+gogole.com,True,142.250.78.132,True,True,,CRITICAL
+gooogle.com,True,142.251.135.228,True,True,,CRITICAL
+ggoogle.com,True,172.217.172.36,True,False,,HIGH
+googl.com,True,172.217.162.164,True,True,,CRITICAL
+ogogle.com,True,172.217.172.164,True,False,,HIGH
+googlee.com,True,172.217.29.228,True,False,,HIGH
+gogle.com,True,142.250.219.196,True,True,,CRITICAL
+goolge.com,True,172.217.29.196,True,True,,CRITICAL
+googlle.com,True,104.21.83.75,False,True,,MEDIUM
+g0ogle.com,True,172.237.146.18,True,False,,HIGH
+googe.com,True,162.243.10.151,False,False,,LOW
+goo9le.com,True,198.187.29.150,True,True,,CRITICAL
+9oogle.com,True,38.165.69.212,False,False,,LOW
+goole.com,True,217.160.0.201,True,True,,CRITICAL
