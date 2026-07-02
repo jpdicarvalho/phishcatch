@@ -52,3 +52,20 @@ O script irá, com um único clique:
 3. Compilar e executar o código do **GLM**.
 
 No final, os 3 relatórios de inteligência (`.csv` gerados por cada modelo) serão automaticamente exportados e agrupados na sua diretoria principal, permitindo uma comparação técnica imediata.
+
+---
+
+## 🧪 Como Executar os Testes Unitários
+
+Para comprovar a sustentabilidade do código e atestar o funcionamento da geração de permutações e motor de avaliação de risco, criámos também um automatismo para testar o código dos 3 modelos isoladamente:
+
+### 1. Dar Permissões de Execução
+```bash
+chmod +x test_all.sh
+```
+
+### 2. Executar os Testes
+```bash
+./test_all.sh
+```
+O script sobrescreve o `ENTRYPOINT` dos contentores Docker e utiliza o framework `unittest` nativo do Python para rodar as baterias de testes em segurança e mostrar-lhe os resultados lado-a-lado.
