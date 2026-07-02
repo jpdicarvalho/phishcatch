@@ -1,69 +1,54 @@
-# 🎣 PhishCatch
+# 🎣 PhishCatch - Avaliação Comparativa de LLMs
 
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
-[![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED.svg?logo=docker)](https://www.docker.com/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/Status-Funcional_%26_Reprodutível-brightgreen.svg)]()
 
-> Artefacto de segurança de redes para análise preventiva de ameaças homográficas e sequestro de domínios (Typosquatting).
+> Artefato académico de segurança de redes para análise preventiva de ameaças homográficas e sequestro de domínios (Typosquatting), gerado de forma independente por três modelos de IA de topo.
 
-## Sobre o Projeto
+## 📖 Sobre o Projeto e Contexto Académico
 
-Na cibersegurança, o **Typosquatting** (sequestro de domínio por erro de digitação) e os **Ataques Homográficos** representam vetores críticos de ameaça. Cibercriminosos registam domínios visualmente muito semelhantes aos de organizações legítimas (ex: `googlee.com` ou `googel.com` em vez de `google.com`). O objetivo central é enganar utilizadores em campanhas de *Phishing* para roubo de credenciais ou orquestrar ataques sofisticados de **BEC (Business Email Compromise)**, enviando e-mails fraudulentos que escapam à perceção visual da vítima.
+Este repositório é o resultado da **Atividade Final de Avaliação Comparativa de Artefatos Gerados por IA**. 
+O objetivo primário é comparar as capacidades arquiteturais, de escrita de código limpo e de sustentabilidade de três Modelos de Linguagem de Larga Escala (LLMs) distintos, confrontados com o mesmo desafio de Cibersegurança: o desenvolvimento integral de uma ferramenta automatizada de *Threat Intelligence* (o **PhishCatch**).
 
-O **PhishCatch** é uma ferramenta automatizada de *Threat Intelligence* e OSINT (Open-Source Intelligence). Através da geração de múltiplas permutações de um domínio alvo, o artefacto realiza uma varredura veloz na internet em busca de registos DNS (IP), servidores de e-mail maliciosos (Registos MX) e páginas web ativas. O resultado final é a produção de inteligência de ameaças acionável, permitindo que equipas de *Blue Team* atuem proativamente no bloqueio (takedown) destas infraestruturas.
+O PhishCatch atua de forma proativa gerando permutações de um domínio alvo (através de Omissão, Repetição, Transposição e Homógrafos), avaliando o nível de ameaça baseado na infraestrutura ativa (servidores Web e Registo MX/E-mail) e penalizando domínios recém-registados (WHOIS) para mitigar potenciais campanhas de Phishing e BEC (*Business Email Compromise*).
 
-## Funcionalidades
+## 🤖 Modelos Avaliados
 
-* **Motor Avançado de Typosquatting:** Gera dezenas de permutações da ameaça utilizando múltiplos algoritmos: omissão, repetição, transposição (letras trocadas adjacentes) e substituição de homógrafos básicos (ex: "o" por "0").
-* **OSINT Profundo (Integração WHOIS):** Consulta ativamente as bases de dados de registo global para extrair a data de criação do domínio malicioso, calculando a sua idade exata em dias.
-* **Triagem Dinâmica de Criticidade:** O motor de risco avalia a ameaça cruzando 3 fatores: existência de servidor web (HTTP 200), servidor de e-mail malicioso (Registo MX) e a idade do domínio. Domínios recém-registados (menos de 30 dias) sofrem forte penalização de risco, refletindo ameaças iminentes.
-* **Resolução Multithread e UX:** Realiza consultas DNS concorrentes apoiadas por uma interface de progresso visual, garantindo uma varredura extremamente rápida de vastos volumes de permutações.
-* **Exportação Estruturada:** Gera automaticamente um relatório `.csv` rico e detalhado com as evidências da varredura, pronto a ser ingerido por plataformas SIEM ou consumido pela equipa de resposta a incidentes.
-* **Isolamento Total (DevSecOps):** Integralmente empacotado via Docker (incluindo dependências de SO como utilitários de rede), garantindo 100% de reprodutibilidade em qualquer ambiente de avaliação e erradicando o problema do *Software Rot*.
+O código fonte gerado está isolado de forma estanque nos respetivos diretórios:
 
-## Como Executar (Via Docker)
+1. 📂 **`phishcatch-claude/` (Versão A):** Desenvolvido pelo **Claude 4.8 Opus**. Destaca-se por uma arquitetura orientada a objetos excecional, um motor de rede assíncrono e uma interface gráfica avançada no terminal.
+2. 📂 **`phishcatch-gpt/` (Versão B):** Desenvolvido pelo **GPT-4.5 Omni**. Destaca-se pela fiabilidade absoluta, boas práticas (*Clean Code*), sustentabilidade a longo prazo e cobertura robusta de testes unitários.
+3. 📂 **`phishcatch-glm/` (Versão C):** Desenvolvido pelo **GLM-4 Plus**. Focado na reprodutibilidade e no minimalismo extremo de dependências (imagem base em Alpine Linux, ideal para *pipelines* de DevSecOps rápidos).
 
-Para garantir a reprodutibilidade, este artefacto foi construído para ser executado integralmente dentro de um contentor Docker. **Não precisa** ter o Python instalado na sua máquina local.
+📄 **Relatório Completo:** A avaliação metodológica e o apuramento técnico final podem ser consultados no ficheiro [Relatorio_Comparativo_PhishCatch.md](Relatorio_Comparativo_PhishCatch.md).
 
-### 1. Construir a imagem (Apenas na primeira vez)
-Faça clone do repositório, entre na pasta e construa a imagem Docker:
+---
 
+## 🚀 Como Executar (Avaliação Facilitada)
+
+Para minimizar o esforço do avaliador e prevenir conflitos de dependências (Software Rot), preparámos um *script* de automação (`run_all.sh`). Este *script* constrói, de forma isolada, os contentores Docker de cada LLM e executa a ferramenta de forma sequencial contra o domínio alvo. **Não necessita de ter Python instalado**, sendo apenas exigido o motor Docker.
+
+### 1. Clonar o Repositório
 ```bash
 git clone https://github.com/jpdicarvalho/phishcatch.git
 cd phishcatch
-docker build -t phishcatch .
 ```
 
-### 2. Executar a ferramenta
+### 2. Dar Permissões de Execução
+```bash
+chmod +x run_all.sh
+```
 
-Inicie o contentor passando o domínio alvo. A flag -v $(pwd):/app garante que o ficheiro .csv gerado seja guardado diretamente na sua diretoria atual.
+### 3. Executar as 3 Versões de Forma Sequencial
+Substitua `google.com` (ou qualquer outro) pelo domínio que pretende analisar:
 
 ```bash
-docker run --rm -v $(pwd):/app phishcatch seu-alvo.com.br
+./run_all.sh google.com
 ```
-### Exemplo de Saída
 
-Ao executar a ferramenta contra um domínio real, a saída no terminal destacará as ameaças críticas (a vermelho):
+### 🔍 O que vai acontecer?
+O script irá, com um único clique:
+1. Compilar e executar o código do **Claude**.
+2. Compilar e executar o código do **GPT**.
+3. Compilar e executar o código do **GLM**.
 
-```bash
-[*] Iniciando PhishCatch no alvo: google.com.br
-[*] 15 permutações de ameaça geradas.
-[*] A resolver DNS, sondar servidores web e verificar Idade (WHOIS)...
-
-Verificando: 100%|██████████| 15/15 [00:07<00:00,  1.92it/s]
-
-
-[+] Varredura Concluída! 8 domínios maliciosos detetados.
-
-[!] googlee.com.br  | Idade: 2268 dias  | E-mail: Sim | Site: Não | Risco: HIGH
-[!] goole.com.br    | Idade: 7996 dias  | E-mail: Não | Site: Sim | Risco: MEDIUM
-[!] googel.com.br   | Idade: 8005 dias  | E-mail: Sim | Site: Não | Risco: HIGH
-[!] ggoogle.com.br  | Idade: 7689 dias  | E-mail: Não | Site: Sim | Risco: MEDIUM
-[!] googe.com.br    | Idade: 8530 dias  | E-mail: Sim | Site: Não | Risco: HIGH
-[!] gogle.com.br    | Idade: 2473 dias  | E-mail: Não | Site: Não | Risco: LOW
-[!] googl.com.br    | Idade: 186 dias   | E-mail: Sim | Site: Sim | Risco: CRITICAL
-[!] googlle.com.br  | Idade: 2570 dias  | E-mail: Não | Site: Não | Risco: LOW
-
-[*] Relatório de Inteligência exportado para: phishcatch_report_google.csv
-```
+No final, os 3 relatórios de inteligência (`.csv` gerados por cada modelo) serão automaticamente exportados e agrupados na sua diretoria principal, permitindo uma comparação técnica imediata.
