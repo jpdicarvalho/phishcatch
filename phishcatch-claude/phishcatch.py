@@ -520,7 +520,7 @@ class ReportExporter:
             return None
 
         base_name = target.split(".")[0]
-        filepath = Path(output_dir) / f"phishcatch_report_{base_name}.csv"
+        filepath = Path(output_dir) / f"phishcatch_report_claude.csv"
 
         with open(filepath, mode="w", newline="", encoding="utf-8") as f:
             writer = csv.DictWriter(f, fieldnames=cls.CSV_COLUMNS)

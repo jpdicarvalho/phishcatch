@@ -31,7 +31,7 @@ O mesmo *prompt* rigoroso (gerado previamente, detalhando os requisitos funciona
 
 ### Versão C: GLM
 * **Pontos fortes (Reprodutibilidade):** Código pragmático, curto e focado na performance crua. Adotou uma arquitetura assíncrona minimalista. O seu grande destaque é a imagem Docker baseada em `Alpine Linux`, resultando num contentor extremamente leve, seguro e rápido, excelente para pipelines de DevSecOps.
-* **Limitações:** Interface de terminal rudimentar (saída básica com `print`). Faltam documentações e comentários robustos no código. A gestão de erros no bloco assíncrono do WHOIS é frágil.
+* **Limitações:** Interface de terminal rudimentar (saída básica com `print`). Faltam documentações e comentários robustos no código. Falha de lógica na exportação: se não detetar ameaças, aborta a execução sem criar o ficheiro CSV (violando o requisito de relatórios garantidos). A gestão de erros no bloco assíncrono do WHOIS também é frágil.
 * **Melhorias recomendadas:** Melhorar a UX no terminal e adicionar uma cobertura de testes mais alargada.
 
 ## Comparação entre as versões

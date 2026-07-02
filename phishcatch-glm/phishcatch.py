@@ -112,7 +112,7 @@ class PhishCatchGLM:
             print("No threats found.")
             return
 
-        filename = f"{self.domain}_glm_report.csv"
+        filename = "phishcatch_report_glm.csv"
         with open(filename, 'w', newline='', encoding='utf-8') as f:
             writer = csv.DictWriter(f, fieldnames=self.results[0].keys())
             writer.writeheader()

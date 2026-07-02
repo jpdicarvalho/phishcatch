@@ -157,7 +157,7 @@ class PhishCatch:
             print("Nenhuma ameaça imediata detetada.")
             return
 
-        csv_file = f"phishcatch_report_{self.base_name}.csv"
+        csv_file = f"phishcatch_report_gpt.csv"
         with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
             writer = csv.DictWriter(file, fieldnames=["domain", "is_registered", "ip_address", "has_mx_record", "has_website", "age_days", "threat_level"])
             writer.writeheader()
