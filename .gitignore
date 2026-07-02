@@ -1,0 +1,4 @@
+# Ignorar relatórios CSV gerados pelas ferramentas
+*.csv
+# Ignorar pastas temporárias do script de automação, caso haja falhas
+tmp_out/
